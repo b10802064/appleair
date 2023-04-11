@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>products</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .box {
+            margin: auto;
+            padding: 20px;
+            display: flex;
+            width: 600px;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .box button {
+            width: 100px;
+            height: 30px;
+        }
+
+        select {
+            width: 100%;
+            height: 30px;
+        }
+
+        input {
+            width: 42.5%;
+            height: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="box">
+        <select name="products" id="products">
+            <option value="">請選擇類別(默認為全部)</option>
+            <option value="3C">3C</option>
+            <option value="food" selected>飲料</option>
+            <option value="drink">食品</option>
+        </select>
+    </div>
+    <div class="box">
+        <input type="text" id="price">
+        <p>> 價格 ></p> <input type="text" id="price2">
+    </div>
+    <div class="box">
+        搜尋(商品名稱):<input type="text" id="seach">
+    </div>
+    <div class="box">
+        <button id="btn">搜尋</button>
+    </div>
+    <div id="container">
+
+    </div>
+
+    <script type="module">
+        import { product } from "./product.js"
+
+        let container, inputclass, inputprice;
+        let table, thead, tbody;
+        var btn = document.getElementById('btn');
+
+
+        let parray = {
+            Titles: ["產品編號", "產品名稱", "數量", "價格", "類別"],
+            product
+        }
+
+        document.getElementById('btn').onclick = function () {
+            buttonClicked();
+        };
+
+
+
+        function buttonClicked() {
+            document.getElementById("container").innerHTML = "";
+            let GlobalCountry2dArray = [];
+
+            container = document.getElementById('container');
+            table = document.createElement('table');
+
+            table.setAttribute("class", "table table-bordered table-striped w-75 mx-auto");
+            table.setAttribute("id", "hh")
+
+            thead = document.createElement('thead');
+            tbody = document.createElement('tbody');
+
+
+            CreateThead(parray.Titles);
+
+            let pricee1 = document.getElementById('price');
+            let pricee2 = document.getElementById('price2');
+            let filter1 = parray.product;
+
+
+            if (document.getElementById("products").options[document.getElementById("products").selectedIndex].text != '請選擇類別(默認為全部)') {
+                filter1 = parray.product.filter(word => word.ProductType == document.getElementById("products").options[document.getElementById("products").selectedIndex].text);
+            }
+
+
+            let filtert = filter1;
+
+            if (pricee1.value) {
+                let filter2 = filtert.filter(p => p.Price < pricee1.value);
+                filtert = filter2;
+            }
+
+
+
+            if (pricee2.value) {
+                let filter3 = filtert.filter(p => p.Price > pricee2.value);
+                filtert = filter3;
+            }
+
+
+
+            if (seach.value) {
+                filtert.forEach(item => {
+                    let values = Object.values(item);
+                    if (item.ProductName.includes(seach.value)) {
+                        GlobalCountry2dArray.push(values);
+                    }
+                })
+            }
+            else{
+                filtert.forEach(item => {
+                    let values = Object.values(item);
+                    GlobalCountry2dArray.push(values);
+                });
+            }
+
+
+            CreateTbody(GlobalCountry2dArray);
+
+
+        }
+
+        function CreateThead(titleArray) {
+            //(1)
+            let theadTR = document.createElement("tr");
+            //(2)建立th,設定資料,th加入tr
+            titleArray.forEach((title, index) => {
+                let th = document.createElement("th");
+                th.innerText = title;
+                theadTR.append(th);
+            });
+            thead.append(theadTR);
+            table.append(thead);
+            container.append(table);
+        }
+
+        function CreateTbody(globalCountry) {
+            globalCountry.forEach(country => {
+                let tr = document.createElement("tr");
+                //(2)建立td,設定資料,td加入tr
+                country.forEach(columndata => {
+                    let td = document.createElement("td");
+                    td.innerText = columndata;
+                    tr.append(td);
+                });
+                tbody.append(tr);
+            });
+            table.append(tbody);
+        }
+
+
+
+    </script>
+</body>
